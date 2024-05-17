@@ -66,6 +66,40 @@ public:
 		return *this;
 	}
 
+    Matrix(Matrix&& obj) : rows(obj.rows),cols(obj.cols),ptr(obj.ptr)
+	{
+		std::cout<<"Move ctor"<<std::endl;
+		obj.ptr = nullptr;
+		obj.cols = 0;
+		obj.rows = 0;
+
+	}
+
+	Matrix& operator=(Matrix&& obj)
+	{
+		std::cout <<"Assignment move " << __FUNCTION__ << std::endl;
+
+		if(this != &obj)
+		{
+        for(int i = 0;i < rows;++i)
+		{
+			delete [] ptr[i];
+		}
+		    delete[] ptr;
+
+		        rows = obj.rows;
+                cols = obj.cols;
+				ptr = obj.ptr;
+
+				obj.ptr = nullptr;
+		        obj.cols = 0;
+		        obj.rows = 0;
+
+		}
+
+		return *this;
+	}
+
 	~Matrix()
 	{
 		for(int i = 0;i < rows;++i)
@@ -94,6 +128,15 @@ public:
 		Matrix tmp = *this;
 		++(*this);
 		return tmp;
+	}
+
+public:
+
+    void printSize()const
+	{
+		std::cout<<"Rows: "<<rows<<std::endl;
+		std::cout<<"Cols: "<<cols<<std::endl;
+
 	}
 
 	void print() const
@@ -128,12 +171,19 @@ private:
 	int** ptr = nullptr;
 };
 
+Matrix f(int x,int y)
+{
+	Matrix m(x,y);
+
+	return m;
+}
 
 int main()
 {
 	Matrix m(2,2);
-	m.matrixInit();
-	m.print();
-	++m;
-	m.print();
+	Matrix m1 = std::move(m);
+	
+
+	m.printSize();
+	m1.printSize();
 }
